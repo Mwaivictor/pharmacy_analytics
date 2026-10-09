@@ -1,0 +1,28 @@
+# --- Secrets & local connection settings --------------------------------
+.env
+*.env
+.pgpass
+pgpass.conf
+*.pem
+*.key
+
+# --- Power BI temporary / cache files -----------------------------------
+~$*.pbix
+*.pbix.bak
+.pbi/
+*.abf
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# --- Local working folders ----------------------------------------------
+_archive_original_sql/
+_to_delete/
+scratch/
+
+# --- OS / editor noise --------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp
