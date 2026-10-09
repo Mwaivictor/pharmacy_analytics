@@ -125,7 +125,7 @@ All views live in the `clean_pharmacy` schema and are defined in `sql/04_analyti
 | `v_product_performance` | product | 189 | `product_id, product_name, category, subcategory, dosage_form, units_sold, transaction_count, total_sales, total_profit, profit_margin_pct, average_rating` |
 | `v_product_branch_performance` | product × branch | 1,841 | `branch, product_id, product_name, category, units_sold, transaction_count, total_revenue, total_profit, profit_margin_pct, average_rating` |
 | `v_customer_performance` | customer | 1,724 | `customer_id, customer_gender, customer_age, city, total_orders, total_units, total_spend, average_order_value, average_rating` |
-| `v_product_priority` | product | 189 | all product metrics + `management_priority` |
+| `v_product_priority` | product | 189 | `product_id, product_name, category, subcategory, units_sold, transaction_count, total_sales, total_profit, profit_margin_pct, average_rating, management_priority` |
 
 ### `management_priority` logic
 

@@ -139,7 +139,7 @@ CREATE TABLE pharmacy_staging.pharmacy_sales (
 | Duplicate `order_id` / exact duplicates | 0 / 0 | Keep de-dup logic anyway (`ROW_NUMBER`) so reloads stay safe |
 | Missing values | Only `customer_rating` (1,546 rows, **25.8 %**) | Keep `NULL`. Imputing would inflate or deflate every rating KPI |
 | Type conformance | 0 bad dates, times, numbers or booleans | Safe to cast |
-| Business ranges | 0 out-of-range qty, price, cost, discount, age, rating | Enforced permanently with `CHECK` constraints |
+| Business ranges | 0 out-of-range qty, price, cost, discount, age, rating | Bad qty/price/cost/discount rows are filtered in `03`; qty, discount and rating are also enforced with `CHECK` constraints |
 | Revenue arithmetic `price × qty × (1 − disc)` | 0 mismatches | Source totals trusted |
 | Profit arithmetic `revenue − cost × qty` | 0 mismatches | Source profit trusted |
 | Loss-making lines | **203** | Kept: they are real business events, analysed in Q6–Q7 |
@@ -168,7 +168,8 @@ SELECT ...,
        EXTRACT(HOUR  FROM order_time)::INT              AS order_hour,
        ROUND(100 * gross_profit_kes / NULLIF(total_amount_kes, 0), 2) AS profit_margin_pct
 FROM typed
-WHERE rn = 1 AND quantity > 0 AND unit_price_kes > 0 AND discount_pct BETWEEN 0 AND 100;
+WHERE rn = 1 AND quantity > 0 AND unit_price_kes > 0 AND unit_cost_kes > 0
+  AND discount_pct BETWEEN 0 AND 100;
 
 ALTER TABLE clean_pharmacy ADD PRIMARY KEY (order_id);
 ```
@@ -323,7 +324,7 @@ All figures come from the SQL in [`06_business_analysis.sql`](sql/06_business_an
 
 ### Branches, cities and channels
 - Performance is **evenly spread across branches**: the top branch (Nairobi CBD, 10.2 %) and the bottom one (Mombasa CBD, 7.7 %) are only 2.5 points apart [Q3].
-- **Nairobi generates 54.9 % of revenue** (KES 7.85 M across five branches including Online). Mombasa is a distant second at KES 2.40 M.
+- **Nairobi generates 54.9 % of revenue** (KES 7.85 M across six branches: five stores plus Online). Mombasa is a distant second at KES 2.40 M.
 - **Margin and revenue rankings disagree.** Online (26.16 %) and Westlands (25.89 %) earn the best margins. Kilimani, the #4 branch by revenue, has the **lowest margin (23.03 %)**. Eldoret Rupa has the highest AOV (KES 2,524.88) despite the lowest order count [Q3].
 - **In-store dominates with 50.2 % of revenue** (KES 7.18 M). Online contributes 36.2 % and the App 13.6 %. Online and App orders carry a higher AOV (≈ KES 2,418 vs 2,351 in-store) [Q8].
 - **M-Pesa handles 61.3 % of transactions** across every channel. Insurance pays for only 7.5 % [Q8].
@@ -367,7 +368,7 @@ All figures come from the SQL in [`06_business_analysis.sql`](sql/06_business_an
 ## 11. Repository structure
 
 ```
-pharmacy-sales-analytics/
+pharmacy_analytics/
 ├── README.md                     ← you are here
 ├── LICENSE
 ├── .gitignore
@@ -407,8 +408,8 @@ pharmacy-sales-analytics/
 ### 1. Clone
 
 ```bash
-git clone https://github.com/<your-github-username>/pharmacy-sales-analytics.git
-cd pharmacy-sales-analytics
+git clone https://github.com/Mwaivictor/pharmacy_analytics.git
+cd pharmacy_analytics
 ```
 
 ### 2. Build the database
@@ -482,7 +483,7 @@ psql -f sql/06_business_analysis.sql
 
 **Victor Brian Githinji Mwai**: data analyst with a background in clinical medicine, working where healthcare, data science and AI meet.
 
-- GitHub: [@<your-github-username>](https://github.com/<your-github-username>)
-- LinkedIn: [<your-linkedin>](https://www.linkedin.com/in/<your-linkedin>)
+- GitHub: [@Mwaivictor](https://github.com/Mwaivictor)
+- Repository: [Mwaivictor/pharmacy_analytics](https://github.com/Mwaivictor/pharmacy_analytics)
 
 If you found this project useful, consider giving it a ⭐.

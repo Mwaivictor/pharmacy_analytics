@@ -2,11 +2,11 @@
    06_business_analysis.sql
    ---------------------------------------------------------------------
    Purpose : Answer the business questions behind the dashboard with
-             SQL alone. Each query is numbered Q1..Q12 and referenced in
+             SQL alone. Each query is numbered Q1..Q13 and referenced in
              the README's "Key findings" section.
    Techniques shown: CTEs, window functions (LAG, SUM OVER, RANK,
-             NTILE, PERCENT_RANK), FILTER aggregates, CASE banding,
-             PERCENTILE_CONT, GROUPING SETS, conditional pivoting.
+             ROW_NUMBER, NTILE), FILTER aggregates, CASE banding,
+             ROLLUP, GROUPING SETS, conditional pivoting.
    ===================================================================== */
 
 SET search_path TO clean_pharmacy;
